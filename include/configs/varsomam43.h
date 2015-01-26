@@ -229,7 +229,7 @@
 				"bootz ${loadaddr} - ${fdtaddr}; " \
 			"fi;" \
 		"fi\0" \
-	"findfdt=setenv fdtfile var-som-am43.dtb;"\
+	"findfdt=setenv fdtfile var-som-am43.dtb;\0"\
 	"netboot=echo Booting from network ...; setenv autoload no; dhcp; tftp ${loadaddr} ${bootfile}; tftp ${fdtaddr} ${fdtfile}; run netargs; bootz ${loadaddr} - ${fdtaddr} \0" 
 
 #define CONFIG_BOOTCOMMAND \
