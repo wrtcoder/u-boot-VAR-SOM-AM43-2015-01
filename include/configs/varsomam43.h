@@ -153,7 +153,7 @@
 #ifndef CONFIG_SPL_BUILD
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	DEFAULT_LINUX_BOOT_ENV \
-	"fdtfile=undefined\0" \
+	"fdtfile=var-som-am43.dtb\0" \
 	"bootpart=0:2\0" \
 	"bootdir=/boot\0" \
 	"bootfile=zImage\0" \
@@ -229,17 +229,7 @@
 				"bootz ${loadaddr} - ${fdtaddr}; " \
 			"fi;" \
 		"fi\0" \
-	"findfdt="\
-		"if test $board_name = AM43EPOS; then " \
-			"setenv fdtfile am43x-epos-evm.dtb; fi; " \
-		"if test $board_name = AM43__GP; then " \
-			"setenv fdtfile am437x-gp-evm.dtb; fi; " \
-		"if test $board_name = AM43__SK; then " \
-			"setenv fdtfile am437x-sk-evm.dtb; fi; " \
-		"if test $board_name = AM43_IDK; then " \
-			"setenv fdtfile am437x-idk-evm.dtb; fi; " \
-		"if test $fdtfile = undefined; then " \
-			"echo WARNING: Could not determine device tree; fi; \0" \
+	"findfdt=setenv fdtfile var-som-am43.dtb;"\
 	"netboot=echo Booting from network ...; setenv autoload no; dhcp; tftp ${loadaddr} ${bootfile}; tftp ${fdtaddr} ${fdtfile}; run netargs; bootz ${loadaddr} - ${fdtaddr} \0" 
 
 #define CONFIG_BOOTCOMMAND \
