@@ -11,7 +11,10 @@
 #include <asm/arch/mux.h>
 #include "board.h"
 
-#define PIN_GPIO5_12_PAD_OFFSET		0x0a48U
+#define PIN_GPIO5_12_PAD_OFFSET				0x0a48U
+#define PIN_GPIO4_27_CAM0_DATA5_PAD_OFFSET		0x0a1cU
+#define PIN_GPMC_A11_PAD_OFFSET				0x086cU
+#define PIN_GPMC_A10_PAD_OFFSET				0x0868U
 
 static struct module_pin_mux rmii1_pin_mux[] = {
 	{OFFSET(mii1_txen), MODE(1)},			/* RMII1_TXEN */
@@ -40,8 +43,13 @@ static struct module_pin_mux rgmii1_pin_mux[] = {
 	{OFFSET(mii1_rxd1), MODE(2) | RXACTIVE},	/* RGMII1_RD1 */
 	{OFFSET(mii1_rxd0), MODE(2) | RXACTIVE},	/* RGMII1_RD0 */
 	{PIN_GPIO5_12_PAD_OFFSET, MODE(7) | PULLUP_EN},	/* GPIO5_12_PAD - When high, ETH1 PHY is enabled */
+	{PIN_GPIO4_27_CAM0_DATA5_PAD_OFFSET, MODE(7) | PULLUP_EN}, /* GPIO4_27 - ETH2 RESETn */
+	{PIN_GPMC_A11_PAD_OFFSET, MODE(7) | RXACTIVE | PULLDOWN_EN},	/* ETH2 PHY: gpmc_a11/RGMII2_RD0 - pull down */
+	{PIN_GPMC_A10_PAD_OFFSET, MODE(7) | RXACTIVE | PULLUP_EN},	/* ETH2 PHY: gpmc_a10/RGMII2_RD1 - pull up */
 	{-1},
 };
+
+
 
 static struct module_pin_mux mdio_pin_mux[] = {
 	{OFFSET(mdio_data), MODE(0) | RXACTIVE | PULLUP_EN},/* MDIO_DATA */
@@ -148,6 +156,7 @@ void enable_board_pin_mux(void)
 #endif
 	} else
 		configure_module_pin_mux(rgmii1_pin_mux);
+
 #if defined(CONFIG_NAND)
 	//configure_module_pin_mux(nand_x8_pin_mux);
 #endif

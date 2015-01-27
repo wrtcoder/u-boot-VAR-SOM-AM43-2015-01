@@ -36,14 +36,15 @@ void board_varsomam43_phy1_enable(void)
 {
        unsigned int temp;
 
-       //GPIO5_12_PAD - When high, ETH1 PHY is enabled */
+       /* GPIO5_12_PAD - When high, ETH1 PHY is enabled */
+
        /* enable module */
        writel(0x0, GPIO5_BASE + 0x0130);
 
        /* enable output for GPIO5_12 */
        writel((1 << 12), GPIO5_BASE + 0x0194);
        temp = readl(GPIO5_BASE + 0x0134);
-      temp = temp & ~(1 << 12);
+       temp = temp & ~(1 << 12);
        writel(temp, GPIO5_BASE + 0x0134);
 
        /* Reset PHY1 */
@@ -54,6 +55,34 @@ void board_varsomam43_phy1_enable(void)
        temp |= (1 << 12);
        writel(temp, GPIO5_BASE + 0x013C);      
 }
+
+static void board_varsomam43_phy2_enable(void)
+{
+	u32 temp;
+
+	/* enable module */
+	writel(0, AM33XX_GPIO4_BASE + OMAP_GPIO_CTRL);
+
+	/* enable output for GPIO4_27 */
+	writel(GPIO_SETDATAOUT(27), AM33XX_GPIO4_BASE + OMAP_GPIO_SETDATAOUT);
+
+	/* Set output enable */
+	temp = readl(AM33XX_GPIO4_BASE + OMAP_GPIO_OE);
+	temp = temp & ~(GPIO_OE_ENABLE(27));
+	writel(temp, AM33XX_GPIO4_BASE + OMAP_GPIO_OE);
+
+	/* Put PHY2 in reset: Set to LOW */
+	temp = readl(AM33XX_GPIO4_BASE + OMAP_GPIO_DATAOUT);
+	temp = temp & ~(1<<27);
+	writel(temp, AM33XX_GPIO4_BASE + OMAP_GPIO_DATAOUT);
+
+	udelay(5000);
+
+	/* Pull PHY2 out of reset: Set to HIGH */
+	temp = temp | (1<<27);
+	writel(temp, AM33XX_GPIO4_BASE + OMAP_GPIO_DATAOUT);
+}
+
 
 /*
  * Read header information from EEPROM into global structure.
@@ -652,8 +681,11 @@ int board_init(void)
 	writel(modena_init0_bw_fractional, &bwlimiter->modena_init0_bw_fractional);
 	writel(modena_init0_bw_integer, &bwlimiter->modena_init0_bw_integer);
 	writel(modena_init0_watermark_0, &bwlimiter->modena_init0_watermark_0);
-	/* Reset var-som-am43 PHY */
+	/* Reset var-som-am43 PHY1 */
 	board_varsomam43_phy1_enable();
+
+	/* Reset var-som-am43 PHY2 */
+	board_varsomam43_phy2_enable();
 
 	/* Enable 32KHz CLKOUT2 signal, required for WL8 */
 	board_varsomam43_32KHz_clkout2_enable();
